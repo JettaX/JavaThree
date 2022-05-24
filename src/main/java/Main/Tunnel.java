@@ -1,14 +1,13 @@
 package Main;
 
+import java.util.concurrent.Semaphore;
+
 public class Tunnel extends Stage {
-    private static volatile int tunnelCount;
-    private static Object tunnelLock = new Object();
+    private static Semaphore semaphore;
 
-    static {
-        tunnelCount = 0;
-    }
 
-    public Tunnel() {
+    public Tunnel(int carsCount) {
+        semaphore = new Semaphore(carsCount / 2);
         this.length = 80;
         this.description = "Тоннель " + length + " метров";
     }
@@ -18,26 +17,14 @@ public class Tunnel extends Stage {
         try {
             try {
                 System.out.println(c.getName() + " готовится к этапу(ждет): " + description);
-                while (true) {
-                    if ((c.getCarsCount() / 2) == tunnelCount) {
-                        synchronized (tunnelLock) {
-                            tunnelLock.wait();
-                        }
-                    } else {
-                        tunnelCount++;
-                        break;
-                    }
-                }
+                semaphore.acquire();
                 System.out.println(c.getName() + " начал этап: " + description);
                 Thread.sleep(length / c.getSpeed() * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
                 System.out.println(c.getName() + " закончил этап: " + description);
-                synchronized (tunnelLock) {
-                    tunnelCount--;
-                    tunnelLock.notifyAll();
-                }
+                semaphore.release();
             }
         } catch (Exception e) {
             e.printStackTrace();
