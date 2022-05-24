@@ -5,7 +5,6 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Main {
     public static final int CARS_COUNT = 4;
-    private static final Object lock = new Object();
     private static CyclicBarrier barrier = new CyclicBarrier(CARS_COUNT + 1);
 
     public static void main(String[] args) {
@@ -13,7 +12,7 @@ public class Main {
         Race race = new Race(new Road(60), new Tunnel(CARS_COUNT), new Road(40));
         Car[] cars = new Car[CARS_COUNT];
         for (int i = 0; i < cars.length; i++) {
-            cars[i] = new Car(race, 20 + (int) (Math.random() * 10), lock, barrier);
+            cars[i] = new Car(race, 20 + (int) (Math.random() * 10), barrier);
         }
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();

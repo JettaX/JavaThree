@@ -11,12 +11,9 @@ public class Car implements Runnable {
         CARS_COUNT = 0;
     }
 
-
     private Race race;
     private int speed;
-    private int carsCount;
     private String name;
-    private final Object lock;
 
     public String getName() {
         return name;
@@ -26,8 +23,7 @@ public class Car implements Runnable {
         return speed;
     }
 
-    public Car(Race race, int speed, Object lock, CyclicBarrier barrier) {
-        this.lock = lock;
+    public Car(Race race, int speed, CyclicBarrier barrier) {
         this.barrier = barrier;
         this.race = race;
         this.speed = speed;
