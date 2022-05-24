@@ -1,12 +1,14 @@
 package Main;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 public class Car implements Runnable {
     private static int CARS_COUNT;
-    private static volatile int countCarsReady;
+    private CyclicBarrier barrier;
 
     static {
         CARS_COUNT = 0;
-        countCarsReady = 0;
     }
 
 
@@ -24,13 +26,9 @@ public class Car implements Runnable {
         return speed;
     }
 
-    public int getCarsCount() {
-        return CARS_COUNT;
-    }
-
-    public Car(Race race, int speed, int carsCount, Object lock) {
+    public Car(Race race, int speed, Object lock, CyclicBarrier barrier) {
         this.lock = lock;
-        this.carsCount = carsCount;
+        this.barrier = barrier;
         this.race = race;
         this.speed = speed;
         CARS_COUNT++;
@@ -46,24 +44,23 @@ public class Car implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        countCarsReady++;
-        synchronized (lock) {
-            if (countCarsReady < carsCount) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                lock.notifyAll();
-            }
+
+        try {
+            barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            throw new RuntimeException(e);
         }
 
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
         }
-        synchronized (lock) {
-            lock.notifyAll();
+
+        try {
+            barrier.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (BrokenBarrierException e) {
+            throw new RuntimeException(e);
         }
     }
 }
