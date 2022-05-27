@@ -53,7 +53,7 @@ class MainTest {
     @Test
     void checkSequence_three() {
         int[] input = {4};
-        boolean expected = true;
+        boolean expected = false;
         boolean actual = Main.checkSequence(input);
         assertEquals(expected, actual);
     }
@@ -76,8 +76,8 @@ class MainTest {
 
     @Test
     void checkSequence_six() {
-        int[] input = {5, 1, 3};
-        boolean expected = true;
+        int[] input = {5, 1, 3, 4};
+        boolean expected = false;
         boolean actual = Main.checkSequence(input);
         assertEquals(expected, actual);
     }

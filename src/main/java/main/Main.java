@@ -24,12 +24,13 @@ public class Main {
         for (int i = 0; i < mass.length; i++) {
             if (mass[i] == 1) {
                 countOne++;
-            }
-            if (mass[i] == 4) {
+            } else if (mass[i] == 4) {
                 countFour++;
+            } else {
+                return false;
             }
         }
-        if (countOne > 0 || countFour > 0) {
+        if (countOne > 0 && countFour > 0) {
             return true;
         }
         return false;
