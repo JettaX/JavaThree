@@ -7,8 +7,11 @@ public class Car implements Runnable {
     private static int CARS_COUNT;
     private CyclicBarrier barrier;
 
+    private volatile static boolean isWinner;
+
     static {
         CARS_COUNT = 0;
+        isWinner = false;
     }
 
     private Race race;
@@ -49,6 +52,13 @@ public class Car implements Runnable {
 
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
+        }
+
+        synchronized (this) {
+            if (!isWinner) {
+                isWinner = true;
+                System.out.println(name + " WIN");
+            }
         }
 
         try {
